@@ -247,7 +247,7 @@ font-size: 12px; color: #fcd34d; line-height: 1.7;
 const ADMIN_PASSWORD = "gulgul2026"; // ← 管理者パスワードを変更してください
 
 // Google Apps Script のデプロイURL（設定後に貼り付け）
-const GAS_URL ="https://script.google.com/macros/s/AKfycbz5H8BDkPfX4F1vm4ROjQVh8HGR3scvnjF7s9iN_fRxzm1hEfPSy97Ro6UMJtnok2VN/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbz5H8BDkPfX4F1vm4ROjQVh8HGR3scvnjF7s9iN_fRxzm1hEfPSy97Ro6UMJtnok2VN/exec";
 
 // ============================================================
 // データ
@@ -374,7 +374,7 @@ function renderSelect() {
 
   return `
     <div style="padding-top:20px">
-      ${GAS_URL === "YOUR_GAS_URL_HERE" ? `
+      ${GAS_URL === "https://script.google.com/macros/s/AKfycbz5H8BDkPfX4F1vm4ROjQVh8HGR3scvnjF7s9iN_fRxzm1hEfPSy97Ro6UMJtnok2VN/exec" ? `
       <div class="setup-banner">
         <strong>⚠️ 設定が必要です</strong>
         Google Apps Script のURLを設定してください。手順書の STEP 2 を参照。
@@ -598,7 +598,7 @@ submittedAt: new Date().toLocaleString(“ja-JP”)
 // ローカルにも保持
 state.adminResults.push(payload);
 
-if (GAS_URL === “YOUR_GAS_URL_HERE”) {
+if (GAS_URL === “https://script.google.com/macros/s/AKfycbz5H8BDkPfX4F1vm4ROjQVh8HGR3scvnjF7s9iN_fRxzm1hEfPSy97Ro6UMJtnok2VN/exec”) {
 // デモモード（GAS未設定）
 state.phase = “done”; render();
 return;
