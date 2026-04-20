@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新卒仮配属 評価フォーム | GULGUL</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f1e;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1e2d45;
+    --accent: #3b82f6;
+    --accent2: #06b6d4;
+    --green: #10b981;
+    --orange: #f59e0b;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --mono: 'DM Mono', monospace;
+    --sans: 'Noto Sans JP', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
+
+/* Background grid */
+body::before {
+content: ‘’;
+position: fixed; inset: 0;
+background-image: linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px),
+linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px);
+background-size: 40px 40px;
+pointer-events: none; z-index: 0;
+}
+
+.container { max-width: 580px; margin: 0 auto; padding: 0 16px 60px; position: relative; z-index: 1; }
+
+/* Header */
+.header {
+background: rgba(17,24,39,0.95);
+backdrop-filter: blur(12px);
+border-bottom: 1px solid var(–border);
+padding: 14px 20px;
+position: sticky; top: 0; z-index: 100;
+display: flex; align-items: center; justify-content: space-between;
+}
+.header-brand { display: flex; flex-direction: column; }
+.header-label { font-family: var(–mono); font-size: 10px; letter-spacing: 3px; color: var(–muted); text-transform: uppercase; }
+.header-title { font-size: 15px; font-weight: 700; color: var(–text); margin-top: 2px; }
+.admin-btn {
+font-family: var(–mono); font-size: 11px; color: var(–muted);
+background: transparent; border: 1px solid var(–border);
+padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s;
+}
+.admin-btn:hover { color: var(–accent); border-color: var(–accent); }
+
+/* Cards */
+.card {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 14px;
+padding: 18px;
+margin-top: 14px;
+}
+.card-label {
+font-family: var(–mono); font-size: 10px; letter-spacing: 2px;
+color: var(–muted); text-transform: uppercase; margin-bottom: 10px;
+}
+
+/* Chips */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+background: var(–surface2); border: 1px solid var(–border);
+border-radius: 8px; padding: 8px 14px; font-size: 13px;
+cursor: pointer; transition: all 0.15s; color: var(–muted);
+font-family: var(–sans);
+}
+.chip:hover { border-color: var(–accent); color: var(–text); }
+.chip.active { background: var(–accent); border-color: var(–accent); color: #fff; font-weight: 700; }
+.chip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* Score buttons */
+.score-row { display: flex; gap: 6px; margin-top: 8px; }
+.score-btn {
+flex: 1; padding: 11px 0; border-radius: 8px; border: none;
+cursor: pointer; font-size: 14px; font-weight: 700;
+background: var(–surface2); color: var(–muted);
+transition: all 0.15s; font-family: var(–sans);
+}
+.score-btn:hover { filter: brightness(1.3); }
+.score-btn.s1.on { background: #ef4444; color: #fff; transform: scale(1.06); }
+.score-btn.s2.on { background: #f97316; color: #fff; transform: scale(1.06); }
+.score-btn.s3.on { background: #eab308; color: #fff; transform: scale(1.06); }
+.score-btn.s4.on { background: #22c55e; color: #fff; transform: scale(1.06); }
+.score-btn.s5.on { background: #10b981; color: #fff; transform: scale(1.06); }
+
+.eval-item { margin-bottom: 12px; }
+.eval-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.eval-name { font-size: 13px; font-weight: 500; }
+.eval-score { font-family: var(–mono); font-size: 17px; font-weight: 700; }
+
+/* Primary button */
+.btn-primary {
+width: 100%; padding: 15px; border: none; border-radius: 12px;
+background: var(–accent); color: #fff; font-size: 15px; font-weight: 700;
+cursor: pointer; transition: all 0.2s; font-family: var(–sans); margin-top: 14px;
+}
+.btn-primary:hover { background: #2563eb; transform: translateY(-1px); }
+.btn-primary:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+.btn-primary.green { background: var(–green); }
+.btn-primary.green:hover { background: #059669; }
+
+.btn-ghost {
+padding: 13px 20px; border: 1px solid var(–border); border-radius: 12px;
+background: transparent; color: var(–muted); font-size: 14px;
+cursor: pointer; font-family: var(–sans); transition: all 0.2s;
+}
+.btn-ghost:hover { border-color: var(–muted); color: var(–text); }
+
+.btn-row { display: flex; gap: 10px; margin-top: 14px; }
+.btn-row .btn-primary { margin-top: 0; }
+
+/* Info card */
+.info-card {
+background: rgba(37,99,235,0.1);
+border: 1px solid rgba(37,99,235,0.3);
+border-radius: 12px; padding: 14px 16px; margin-top: 14px;
+}
+.info-card .store { font-size: 12px; color: #93c5fd; }
+.info-card .name { font-size: 17px; font-weight: 700; color: #dbeafe; margin-top: 2px; }
+.info-card .period { font-size: 11px; color: #475569; margin-top: 3px; font-family: var(–mono); }
+
+/* Confirm list */
+.confirm-row {
+display: flex; justify-content: space-between; align-items: center;
+padding: 8px 0; border-bottom: 1px solid var(–border);
+}
+.confirm-row:last-child { border-bottom: none; }
+.confirm-label { font-size: 12px; color: var(–muted); }
+.confirm-val { font-family: var(–mono); font-weight: 700; font-size: 14px; }
+.total-row { display: flex; justify-content: space-between; align-items: center; padding-top: 14px; margin-top: 6px; }
+.total-label { font-size: 15px; font-weight: 700; }
+.total-val { font-family: var(–mono); font-size: 26px; font-weight: 700; }
+
+/* Done */
+.done-wrap { text-align: center; padding: 56px 20px; }
+.done-icon { font-size: 60px; margin-bottom: 16px; }
+.done-title { font-size: 20px; font-weight: 700; color: var(–green); margin-bottom: 8px; }
+.done-sub { color: var(–muted); font-size: 13px; margin-bottom: 32px; }
+
+/* Textarea */
+textarea {
+width: 100%; background: var(–surface2); border: 1px solid var(–border);
+border-radius: 8px; color: var(–text); padding: 10px 12px;
+font-size: 13px; resize: vertical; min-height: 70px;
+font-family: var(–sans); outline: none; margin-top: 8px;
+}
+textarea:focus { border-color: var(–accent); }
+
+/* Admin */
+.admin-login { max-width: 360px; margin: 60px auto; }
+.admin-login h2 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.admin-login p { color: var(–muted); font-size: 13px; margin-bottom: 20px; }
+input[type=password] {
+width: 100%; background: var(–surface2); border: 1px solid var(–border);
+border-radius: 10px; color: var(–text); padding: 12px 14px;
+font-size: 15px; font-family: var(–mono); outline: none;
+}
+input[type=password]:focus { border-color: var(–accent); }
+.err { color: var(–red); font-size: 12px; margin-top: 8px; font-family: var(–mono); }
+
+/* Results */
+.result-card {
+background: var(–surface); border: 1px solid var(–border);
+border-radius: 12px; padding: 14px 16px; margin-top: 10px;
+cursor: pointer; transition: border-color 0.15s;
+}
+.result-card:hover { border-color: var(–accent); }
+.result-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.result-name { font-size: 15px; font-weight: 700; }
+.result-meta { font-size: 11px; color: var(–muted); margin-top: 3px; }
+.bar-row { display: flex; gap: 3px; margin-top: 10px; }
+.bar-seg { flex: 1; height: 4px; border-radius: 2px; }
+
+.badge {
+display: inline-block; background: var(–accent); color: #fff;
+border-radius: 10px; padding: 1px 8px; font-size: 11px;
+font-family: var(–mono); margin-left: 6px;
+}
+
+.period-tag {
+font-family: var(–mono); font-size: 10px; color: var(–muted);
+background: var(–surface2); border: 1px solid var(–border);
+padding: 2px 8px; border-radius: 4px; margin-bottom: 14px; display: inline-block;
+}
+
+.spinner {
+display: inline-block; width: 16px; height: 16px;
+border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 8px;
+vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.sending-overlay {
+position: fixed; inset: 0; background: rgba(10,15,30,0.85);
+display: flex; align-items: center; justify-content: center;
+z-index: 999; font-size: 15px; font-weight: 700;
+}
+
+/* Setup banner */
+.setup-banner {
+background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3);
+border-radius: 12px; padding: 14px 16px; margin-top: 14px;
+font-size: 12px; color: #fcd34d; line-height: 1.7;
+}
+.setup-banner strong { display: block; font-size: 13px; margin-bottom: 4px; }
+</style>
+
+</head>
+<body>
+
+<!-- Sending overlay -->
+
+<div class="sending-overlay" id="sendingOverlay" style="display:none">
+  <span class="spinner"></span> 送信中...
+</div>
+
+<!-- Header -->
+
+<div class="header">
+  <div class="header-brand">
+    <span class="header-label">GULGUL</span>
+    <span class="header-title">新卒仮配属 評価フォーム</span>
+  </div>
+  <button class="admin-btn" onclick="goAdmin()">管理者 →</button>
+</div>
+
+<div class="container" id="app"></div>
+
+<script>
+// ============================================================
+// ★ 設定エリア ★
+// ============================================================
+const ADMIN_PASSWORD = "gulgul2026"; // ← 管理者パスワードを変更してください
+
+// Google Apps Script のデプロイURL（設定後に貼り付け）
+const GAS_URL = "YOUR_GAS_URL_HERE";
+
+// ============================================================
+// データ
+// ============================================================
+const PERIODS = [
+  "4/16〜4/28",
+  "4/29〜5/12",
+  "5/13〜5/26",
+  "5/27〜6/9",
+  "6/10〜6/30"
+];
+
+const SCHEDULE = {
+  "4/16〜4/28": {
+    "新小岩":   ["荒日南多", "鈴木凛"],
+    "妙典":     ["渡邉柚月", "大塚杏"],
+    "下総中山": ["村岡愛莉", "河村恋羽"],
+    "本八幡":   ["大山華鈴", "河井心音"],
+    "smoo's":  ["岡田彩里", "佃澪那"],
+    "表参道":   ["大竹椿咲", "行田歩直"],
+    "aoakua":  ["遠山蒼衣", "西牟田紗季"],
+    "elu":      ["木村結", "渡瀬明日花"],
+    "few.":     ["青木花歩", "梶内心結", "鈴木里桜"]
+  },
+  "4/29〜5/12": {
+    "新小岩":   ["佃澪那", "渡瀬明日花"],
+    "妙典":     ["大山華鈴", "木村結"],
+    "下総中山": ["渡邉柚月", "大塚杏"],
+    "本八幡":   ["鈴木里桜"],
+    "smoo's":  ["大竹椿咲", "西牟田紗季"],
+    "表参道":   ["青木花歩", "鈴木凛"],
+    "aoakua":  ["荒日南多", "梶内心結"],
+    "elu":      ["村岡愛莉", "岡田彩里", "遠山蒼衣"],
+    "few.":     ["河井心音", "河村恋羽", "行田歩直"]
+  },
+  "5/13〜5/26": {
+    "新小岩":   ["梶内心結", "河村恋羽"],
+    "妙典":     ["行田歩直", "鈴木里桜"],
+    "下総中山": ["河井心音", "遠山蒼衣"],
+    "本八幡":   ["青木花歩"],
+    "smoo's":  ["村岡愛莉", "渡瀬明日花"],
+    "表参道":   ["岡田彩里", "佃澪那"],
+    "aoakua":  ["渡邉柚月", "大塚杏", "大山華鈴"],
+    "elu":      ["大竹椿咲", "荒日南多", "西牟田紗季"],
+    "few.":     ["木村結", "鈴木凛"]
+  },
+  "5/27〜6/9": {
+    "新小岩":   ["木村結", "遠山蒼衣"],
+    "妙典":     ["鈴木凛", "西牟田紗季"],
+    "下総中山": ["荒日南多", "大山華鈴", "行田歩直"],
+    "本八幡":   ["渡邉柚月"],
+    "smoo's":  ["青木花歩", "河村恋羽"],
+    "表参道":   ["村岡愛莉", "梶内心結"],
+    "aoakua":  ["大竹椿咲", "渡瀬明日花"],
+    "elu":      ["河井心音", "鈴木里桜", "佃澪那"],
+    "few.":     ["大塚杏", "岡田彩里"]
+  },
+  "6/10〜6/30": {
+    "新小岩":   ["岡田彩里", "鈴木里桜"],
+    "妙典":     ["遠山蒼衣"],
+    "下総中山": ["大竹椿咲", "木村結"],
+    "本八幡":   ["大塚杏"],
+    "smoo's":  ["荒日南多", "梶内心結", "行田歩直"],
+    "表参道":   ["河井心音", "西牟田紗季"],
+    "aoakua":  ["村岡愛莉", "佃澪那"],
+    "elu":      ["青木花歩", "河村恋羽", "鈴木凛"],
+    "few.":     ["渡邉柚月", "大山華鈴", "渡瀬明日花"]
+  }
+};
+
+const ITEMS = [
+  { key: "greeting",    label: "挨拶" },
+  { key: "memo",        label: "メモ" },
+  { key: "proactive",   label: "積極性" },
+  { key: "service",     label: "元気よく接客できているか" },
+  { key: "praised",     label: "お客様に褒められる" },
+  { key: "staff_comm",  label: "スタッフとのコミュニケーション力" },
+  { key: "client_comm", label: "お客様とのコミュニケーション力" },
+  { key: "attitude",    label: "勤務態度" },
+  { key: "goal",        label: "１ヶ月の目標に対する達成率" },
+  { key: "training",    label: "研修・練習態度" },
+];
+
+// ============================================================
+// State
+// ============================================================
+let state = {
+  phase: "select", // select | eval | confirm | done | admin_login | admin_results | admin_detail
+  period: "", store: "", junior: "",
+  scores: {}, comment: "",
+  adminResults: [], // ローカル一時保持
+  viewResult: null,
+  adminErr: "",
+};
+
+function emptyScores() {
+  const s = {};
+  ITEMS.forEach(i => s[i.key] = 0);
+  return s;
+}
+
+// ============================================================
+// Render
+// ============================================================
+function render() {
+  const app = document.getElementById("app");
+  switch(state.phase) {
+    case "select":       app.innerHTML = renderSelect(); break;
+    case "eval":         app.innerHTML = renderEval(); break;
+    case "confirm":      app.innerHTML = renderConfirm(); break;
+    case "done":         app.innerHTML = renderDone(); break;
+    case "admin_login":  app.innerHTML = renderAdminLogin(); break;
+    case "admin_results":app.innerHTML = renderAdminResults(); break;
+    case "admin_detail": app.innerHTML = renderAdminDetail(); break;
+  }
+}
+
+// ============================================================
+// Phase: Select
+// ============================================================
+function renderSelect() {
+  const stores = state.period ? Object.keys(SCHEDULE[state.period]) : [];
+  const juniors = (state.period && state.store) ? (SCHEDULE[state.period][state.store] || []) : [];
+
+  return `
+    <div style="padding-top:20px">
+      ${GAS_URL === "YOUR_GAS_URL_HERE" ? `
+      <div class="setup-banner">
+        <strong>⚠️ 設定が必要です</strong>
+        Google Apps Script のURLを設定してください。手順書の STEP 2 を参照。
+      </div>` : ""}
+
+      <div class="card">
+        <div class="card-label">評価期間を選ぶ</div>
+        <div class="chips">
+          ${PERIODS.map(p => `<button class="chip${state.period===p?" active":""}" onclick="setPeriod('${p}')">${p}</button>`).join("")}
+        </div>
+      </div>
+
+      ${state.period ? `
+      <div class="card">
+        <div class="card-label">店舗を選ぶ</div>
+        <div class="chips">
+          ${stores.map(s => `<button class="chip${state.store===s?" active":""}" onclick="setStore('${s}')">${s}</button>`).join("")}
+        </div>
+      </div>` : ""}
+
+      ${state.store ? `
+      <div class="card">
+        <div class="card-label">評価するスタッフ</div>
+        <div class="chip-grid">
+          ${juniors.map(j => `<button class="chip${state.junior===j?" active":""}" onclick="setJunior('${j}')">${j}</button>`).join("")}
+        </div>
+      </div>` : ""}
+
+      <button class="btn-primary" ${(!state.period||!state.store||!state.junior)?"disabled":""} onclick="startEval()">
+        評価を始める →
+      </button>
+    </div>
+  `;
+}
+
+// ============================================================
+// Phase: Eval
+// ============================================================
+function renderEval() {
+  const total = Object.values(state.scores).reduce((a,b)=>a+b,0);
+
+  return `
+    <div style="padding-top:20px">
+      <div class="info-card">
+        <div class="store">${state.store}</div>
+        <div class="name">${state.junior}</div>
+        <div class="period">${state.period}</div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        ${ITEMS.map(item => {
+          const s = state.scores[item.key] || 0;
+          const color = scoreColor(s);
+          return `
+          <div class="eval-item">
+            <div class="eval-header">
+              <span class="eval-name">${item.label}</span>
+              <span class="eval-score" style="color:${color}">${s}<span style="color:var(--muted);font-size:12px">/5</span></span>
+            </div>
+            <div class="score-row">
+              ${[1,2,3,4,5].map(n => `
+                <button class="score-btn s${n}${state.scores[item.key]===n?" on":""}"
+                  onclick="setScore('${item.key}',${n})">${n}</button>
+              `).join("")}
+            </div>
+          </div>`;
+        }).join("")}
+      </div>
+
+      <div class="card">
+        <div class="card-label">コメント（任意）</div>
+        <textarea placeholder="気になった点や特記事項があれば..." onchange="setState('comment',this.value)">${state.comment}</textarea>
+
+```
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-ghost" onclick="goSelect()">← 戻る</button>
+    <button class="btn-primary" onclick="goConfirm()" style="flex:1">確認する</button>
+  </div>
+</div>
+```
+
+`;
+}
+
+// ============================================================
+// Phase: Confirm
+// ============================================================
+function renderConfirm() {
+const total = Object.values(state.scores).reduce((a,b)=>a+b,0);
+return `<div style="padding-top:20px"> <div class="info-card"> <div class="store">${state.store}</div> <div class="name">${state.junior}</div> <div class="period">${state.period}</div> </div> <div class="card"> ${ITEMS.map(item => { const s = state.scores[item.key]||0; return`<div class="confirm-row">
+<span class="confirm-label">${item.label}</span>
+<span class="confirm-val" style="color:${scoreColor(s)}">${s}<span style="color:var(--muted);font-size:11px">/5</span></span>
+</div>`; }).join("")} <div class="total-row"> <span class="total-label">合計</span> <span class="total-val" style="color:${totalColor(total)}">${total}<span style="color:var(--muted);font-size:14px">/50</span></span> </div> </div> ${state.comment ? `<div class="card"><div class="card-label">コメント</div><p style="font-size:13px;color:#cbd5e1;margin-top:6px">${state.comment}</p></div>`: ""} <div class="btn-row"> <button class="btn-ghost" onclick="setState('phase','eval');render()">← 修正</button> <button class="btn-primary green" onclick="submitEval()" style="flex:1">送信する ✓</button> </div> </div>`;
+}
+
+// ============================================================
+// Phase: Done
+// ============================================================
+function renderDone() {
+return `<div class="done-wrap"> <div class="done-icon">✅</div> <div class="done-title">送信完了！</div> <div class="done-sub">${state.junior} の評価を記録しました</div> <button class="btn-primary" onclick="resetForm()">続けて評価する</button> </div>`;
+}
+
+// ============================================================
+// Phase: Admin Login
+// ============================================================
+function renderAdminLogin() {
+return `<div class="admin-login"> <h2>管理者ログイン</h2> <p>パスワードを入力してください</p> <input type="password" id="pwInput" placeholder="パスワード" onkeydown="if(event.key==='Enter')checkAdmin()"> ${state.adminErr ?`<div class="err">${state.adminErr}</div>`: ""} <button class="btn-primary" onclick="checkAdmin()" style="margin-top:14px">ログイン</button> <button class="btn-ghost" onclick="setState('phase','select');render()" style="margin-top:10px;width:100%">← 戻る</button> </div>`;
+}
+
+// ============================================================
+// Phase: Admin Results
+// ============================================================
+function renderAdminResults() {
+const results = state.adminResults;
+return `<div style="padding-top:20px"> <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"> <span style="font-size:13px;color:var(--muted)">評価済み：${results.length}件</span> <button class="admin-btn" onclick="setState('phase','select');render()">← 入力画面</button> </div> ${results.length === 0 ?`<div class="card" style="text-align:center;color:var(--muted);padding:40px">まだデータがありません</div>`: ""} ${results.map((r,i) =>`
+<div class="result-card" onclick="viewDetail(${i})">
+<div class="result-header">
+<div>
+<div class="result-name">${r.junior}</div>
+<div class="result-meta">${r.store} · ${r.period} · ${r.submittedAt}</div>
+</div>
+<span class="total-val" style="font-size:22px;color:${totalColor(r.total)}">${r.total}<span style="color:var(--muted);font-size:12px">/50</span></span>
+</div>
+<div class="bar-row">
+${ITEMS.map(item => `<div class="bar-seg" style="background:${scoreColor(r.scores[item.key]||0)}" title="${item.label}"></div>`).join(””)}
+</div>
+</div>
+`).join("")} </div> `;
+}
+
+// ============================================================
+// Phase: Admin Detail
+// ============================================================
+function renderAdminDetail() {
+const r = state.viewResult;
+if (!r) return “”;
+return `<div style="padding-top:20px"> <button class="btn-ghost" onclick="setState('phase','admin_results');render()" style="margin-bottom:14px">← 一覧へ</button> <div class="info-card"> <div class="store">${r.store}</div> <div class="name">${r.junior}</div> <div class="period">${r.period} · ${r.submittedAt}</div> </div> <div class="card"> ${ITEMS.map(item => { const s = r.scores[item.key]||0; return`<div class="confirm-row">
+<span class="confirm-label">${item.label}</span>
+<div style="display:flex;align-items:center;gap:8px">
+<div style="display:flex;gap:3px">
+${[1,2,3,4,5].map(n=>`<div style="width:8px;height:8px;border-radius:2px;background:${n<=s?scoreColor(s):"var(--surface2)"}"></div>`).join(””)}
+</div>
+<span class="confirm-val" style="color:${scoreColor(s)}">${s}/5</span>
+</div>
+</div>`; }).join("")} <div class="total-row"> <span class="total-label">合計</span> <span class="total-val" style="color:${totalColor(r.total)}">${r.total}<span style="color:var(--muted);font-size:14px">/50</span></span> </div> </div> ${r.comment ? `<div class="card"><div class="card-label">コメント</div><p style="font-size:13px;color:#cbd5e1;margin-top:6px">${r.comment}</p></div>`: ""} </div>`;
+}
+
+// ============================================================
+// Helpers
+// ============================================================
+function scoreColor(s) {
+if (s===0) return “#334155”;
+if (s===1) return “#ef4444”;
+if (s===2) return “#f97316”;
+if (s===3) return “#eab308”;
+if (s===4) return “#22c55e”;
+return “#10b981”;
+}
+function totalColor(t) {
+if (t < 20) return “#ef4444”;
+if (t < 30) return “#f97316”;
+if (t < 40) return “#eab308”;
+if (t < 46) return “#22c55e”;
+return “#10b981”;
+}
+
+// ============================================================
+// Actions
+// ============================================================
+function setState(key, val) { state[key] = val; }
+
+function setPeriod(p) {
+state.period = p; state.store = “”; state.junior = “”;
+render();
+}
+function setStore(s) {
+state.store = s; state.junior = “”;
+render();
+}
+function setJunior(j) {
+state.junior = j; render();
+}
+function startEval() {
+state.scores = emptyScores(); state.comment = “”;
+state.phase = “eval”; render();
+}
+function goSelect() {
+state.phase = “select”; render();
+}
+function setScore(key, val) {
+state.scores[key] = val; render();
+}
+function goConfirm() {
+const missing = ITEMS.filter(i => !state.scores[i.key]);
+if (missing.length > 0) {
+alert(“未評価の項目があります：\n” + missing.map(i=>i.label).join(”、”));
+return;
+}
+state.phase = “confirm”; render();
+}
+function resetForm() {
+state.period=””; state.store=””; state.junior=””;
+state.scores={}; state.comment=””;
+state.phase=“select”; render();
+}
+
+async function submitEval() {
+const total = Object.values(state.scores).reduce((a,b)=>a+b,0);
+const payload = {
+period: state.period,
+store: state.store,
+junior: state.junior,
+scores: state.scores,
+comment: state.comment,
+total,
+submittedAt: new Date().toLocaleString(“ja-JP”)
+};
+
+// ローカルにも保持
+state.adminResults.push(payload);
+
+if (GAS_URL === “YOUR_GAS_URL_HERE”) {
+// デモモード（GAS未設定）
+state.phase = “done”; render();
+return;
+}
+
+document.getElementById(“sendingOverlay”).style.display = “flex”;
+try {
+await fetch(GAS_URL, {
+method: “POST”,
+mode: “no-cors”,
+headers: { “Content-Type”: “application/json” },
+body: JSON.stringify(payload)
+});
+} catch(e) {
+console.error(e);
+}
+document.getElementById(“sendingOverlay”).style.display = “none”;
+state.phase = “done”; render();
+}
+
+function goAdmin() {
+state.adminErr = “”;
+state.phase = “admin_login”; render();
+}
+function checkAdmin() {
+const pw = document.getElementById(“pwInput”)?.value || “”;
+if (pw === ADMIN_PASSWORD) {
+state.phase = “admin_results”; render();
+} else {
+state.adminErr = “パスワードが違います”;
+render();
+}
+}
+function viewDetail(i) {
+state.viewResult = state.adminResults[i];
+state.phase = “admin_detail”; render();
+}
+
+// ============================================================
+// Init
+// ============================================================
+render();
+</script>
+
+</body>
+</html>
